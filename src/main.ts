@@ -12,6 +12,10 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 const controls = {
   tesselations: 5,
   'Load Scene': loadScene, // A function pointer, essentially
+  'Speed' : 0.005,
+  'Light col_r': 1,
+  'Light col_g': 1,
+  'Light col_b': 1,
 };
 
 let square: Square;
@@ -47,6 +51,10 @@ function main() {
 
   // Add controls to the gui
   const gui = new DAT.GUI();
+  gui.add(controls, 'Speed', 0.00, 0.01).step(0.0005);
+  gui.add(controls, 'Light col_r', 0, 2).step(0.05);
+  gui.add(controls, 'Light col_g', 0, 2).step(0.05);
+  gui.add(controls, 'Light col_b', 0, 2).step(0.05);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -61,7 +69,7 @@ function main() {
   // Initial call to load scene
   loadScene();
 
-  const camera = new Camera(vec3.fromValues(0, 0, -10), vec3.fromValues(0, 0, 0));
+  const camera = new Camera(vec3.fromValues(0, 10, -30), vec3.fromValues(0, 0, 0));
 
   const renderer = new OpenGLRenderer(canvas);
   renderer.setClearColor(164.0 / 255.0, 233.0 / 255.0, 1.0, 1);
@@ -78,6 +86,10 @@ function main() {
 
   // This function will be called every frame
   function tick() {
+    let color = vec3.fromValues(controls['Light col_r'], controls['Light col_g'], controls['Light col_b']);
+    flat.setLightColor(color);
+    flat.setSpeed(controls.Speed);
+
     camera.update();
     stats.begin();
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
