@@ -50,3 +50,18 @@ metaball with lambert
 metaball with lambert and ambient occlusion
 ![](images/metaball_with_ao.png)
 
+Circuluar Floor:
+- The floor is a simple cylinder sdf. The math to compute the sdf for the cylinder can be found at http://www.iquilezles.org/
+- The movement of the cylinder is a simple rotation along the y-axis where the degree of rotation varies over time.
+- The base color of the floor is determined by taking the mod of the sum of a sin(pos.x) + sin(pos.z) and then flooring the result. This works because as the position changes over time, the sin grows towars 1 or -1 as decimals. When you floor the results, it will always repeat along this 1 or -1 resulting a period of repeated patterns. This creates the initial checker board coloring within the floor. To add the circles, I multiplied the sin(pos.x) + sin(pos.z) by a constant. Here is the math I used: floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
+- Besides the base color, there is also lambert light applied to the floor. The math for lambert shading is talked about above.
+- There is also penumbra shadows from the metaballs applied to the floor. The math behind this can be found at: https://iquilezles.org/www/articles/rmshadows/rmshadows.htm.
+
+floor color constant = 0.5, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
+![](images/floor_0.5.png)
+
+floor color constant = 1, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
+![](images/floor_1.png)
+
+floor color constant = 4, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
+![](images/floor_4.png)
