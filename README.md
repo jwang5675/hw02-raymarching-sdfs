@@ -80,4 +80,6 @@ Ambient Occlusion:
 
 ![](images/ao.png)
 
-- From the above picture, we can see that adding ao to the scene adds a bit of light to the sdfs. In addition, you can see where the normal are close and run into other sdf shapes have much darker shadows compared to the ambient light added to the objects.
+- From the above picture, we can see that adding ao to the scene adds a bit of light to the sdfs. In addition, you can see where the normal are close and run into other sdf shapes have much darker shadows compared to the ambient light added to the objects. Here is a scaled up ao where it is easier to see the effects of the ao.
+
+![](images/scaledao.png)
