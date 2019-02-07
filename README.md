@@ -42,11 +42,11 @@ Metaballs:
 	- The movement of the metaballs are based off of smooth scaling of time with sin and cos functions. You can modify the speed at which the metaballs move with the speed parameter within the gui. This is accomplished by multiplying the initial position of the metaball by cos(time * speed) and sin(time * speed) to get a smooth movement. 
 
 metaball base color
-![](images/metaball_base_color.jpg)
+![](images/metaball_base_color.png)
 
 metaball with lambert
-![](images/metaball_with_lambert.jpg)
+![](images/metaball_with_lambert.png)
 
 metaball with lambert and ambient occlusion
-![](images/metaball_with_ao.jpg)
+![](images/metaball_with_ao.png)
 
