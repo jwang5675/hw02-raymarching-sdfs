@@ -1,89 +1,52 @@
 # CIS 566 Homework 2: Implicit Surfaces
+Jason Wang (jasonwa)
 
-## Objective
-- Gain experience with signed distance functions
-- Experiment with animation curves
+Warning, scene is a bit slow. Reducing resolution/using Firefox will make the experience better.
+Demo: https://jwang5675.github.io/hw02-raymarching-sdfs/
 
-## Base Code
-The code we have provided for this assignment features the following:
-- A square that spans the range [-1, 1] in X and Y that is rendered with a
-shader that does not apply a projection matrix to it, thus rendering it as the
-entirety of your screen
-- TypeScript code just like the code in homework 1 to set up a WebGL framework
-- Code that passes certain camera attributes (listed in the next section),
-the screen dimensions, and a time counter to the shader program.
+Sources:
+  - The math for SDFs/Normals/Extra Credit info was adopted from class slides or from http://www.iquilezles.org/
+  - The function used to derive the normals for metaballs are from: http://blackpawn.com/texts/metanormals/default.html
 
-## Assignment Requirements
-- __(10 points)__ Modify the provided `flat-frag.glsl` to cast rays from a
-virtual camera. We have set up uniform variables in your shader that take in
-the eye position, reference point position, and up vector of the `Camera` in
-the provided TypeScript code, along with a uniform that stores the screen width
-and height. Using these uniform variables, and only these uniform variables,
-you must write a function that uses the NDC coordinates of the current fragment
-(i.e. its fs_Pos value) and projects a ray from that pixel. Refer to the [slides
-on ray casting](https://docs.google.com/presentation/d/e/2PACX-1vSN5ntJISgdOXOSNyoHimSVKblnPnL-Nywd6aRPI-XPucX9CeqzIEGTjFTwvmjYUgCglTqgvyP1CpxZ/pub?start=false&loop=false&delayms=60000&slide=id.g27215b64c6_0_107)
-from CIS 560 for reference on how to cast a ray without an explicit
-view-projection matrix. You'll have to compute your camera's Right vector based
-on the provided Up vector, Eye point, and Ref point. You can test your ray
-casting function by converting your ray directions to colors using the formula
-`color = 0.5 * (dir + vec3(1.0, 1.0, 1.0))`. If your screen looks like the
-following image, your rays are being cast correctly:
-![](rayDir.png)
-- __(70 points)__ Create and animate a scene using signed distance functions.
-The subject of your scene can be anything you like, provided your scene includes
-the following elements:
-  - The SDF combination operations Intersection, Subtraction, and Smooth Blend
-  - Raymarch optimization by way of bounding volumes around SDFs, arranged in
-  a Bounding Volume Hierarchy
-  - Animation of at least two scene attributes such as color, position, scale,
-  twist, rotation, texture, or anything else you can think of
-  - At least two functions mentioned in the Toolbox Functions slides used for
-  animation
-  - Procedural texturing using toolbox functions and/or noise functions
-  - Shading that involves surface normal computation
+## Features Implemented
+Here is a high-level overview of implemented features
 
-- __(10 points)__ Add GUI elements via dat.GUI that allow the user to modify at
-least two different attributes of your scene.
+Ray Casting:
+- Changed fragment's fs_Pos to NDC coordinates to cast rays into the scene. 
 
-- __(10 points)__ Following the specifications listed
-[here](https://github.com/pjcozzi/Articles/blob/master/CIS565/GitHubRepo/README.md),
-create your own README.md, renaming this file to INSTRUCTIONS.md. Don't worry
-about discussing runtime optimization for this project. Make sure your
-README contains the following information:
-  - Your name and PennKey
-  - Citation of any external resources you found helpful when implementing this
-  assignment.
-  - A link to your live github.io demo (refer to the pinned Piazza post on
-    how to make a live demo through github.io)
-  - An explanation of the techniques you used to generate your planet features.
-  Please be as detailed as you can; not only will this help you explain your work
-  to recruiters, but it helps us understand your project when we grade it!
+Scene:
+- Used SDF combinations for intersection and smooth blend for rising pistons circling the floor in the scene.
+- Used bounding boxes to first test for ray and cube intersection before ray marching in the scene to optimize for bounding volumes. This significantly speeds up the ray marching step.
+- Implemented animation for movement and color of the scene.
+- Used two types of functions for animation: sin/cos trig functions for rotational movement over time and parabola function for up and down movement of the metaballs movement and pistons. This will be explained more in detail below.
+- Used a checkerboard abs() pattern and sin/cos curves with color from the toolbox functions to implement the white and pink texture on the round floor and pistons in the scene.
+- Used normals for shading in the scene which includes penumbra shadows, ambient occlusion, and lambert lighting for the scene.
 
-## Useful Links
-- [IQ's Article on SDFs](http://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm)
-- [IQ's Article on Smooth Blending](http://www.iquilezles.org/www/articles/smin/smin.htm)
-- [IQ's Article on Useful Functions](http://www.iquilezles.org/www/articles/functions/functions.htm)
-- [Breakdown of Rendering an SDF Scene](http://www.iquilezles.org/www/material/nvscene2008/rwwtt.pdf)
+Gui:
+  - Added Light Intensity to the gui to allow the user to change the lambert light intensity within the scene
+  - Added a speed function to speed up the animation in scene
+
+Extra Credit:
+  - Added soft shadows with prenumbra shadows
+  - Added ambient occlusion to the scene with 5-tap AO
 
 
-## Submission
-Commit and push to Github, then submit a link to your commit on Canvas. Remember
-to make your own README!
+## Implementation Details
 
-## Inspiration
-- [Alien Corridor](https://www.shadertoy.com/view/4slyRs)
-- [The Evolution of Motion](https://www.shadertoy.com/view/XlfGzH)
-- [Fractal Land](https://www.shadertoy.com/view/XsBXWt)
-- [Voxel Edges](https://www.shadertoy.com/view/4dfGzs)
-- [Snail](https://www.shadertoy.com/view/ld3Gz2)
-- [Cubescape](https://www.shadertoy.com/view/Msl3Rr)
-- [Journey Tribute](https://www.shadertoy.com/view/ldlcRf)
-- [Stormy Landscape](https://www.shadertoy.com/view/4ts3z2)
-- [Generators](https://www.shadertoy.com/view/Xtf3Rn)
+There are 4 main aspects of the scene. I will discuss them in detail below.
 
-## Extra Credit (20 points maximum)
-- __(5 - 20 pts)__ Do some research into more advanced shading techniques such
-as ambient occlusion, soft shadows, GGX materials, depth of field, volumetrics,
-etc. and implement one of them. The more complex your feature, the more points
-you'll earn.
-- __(? pts)__ Propose an extra feature of your own!
+Metaballs:
+	- The metaballs sdf in the scene are implemented with a slight modification to sphere sdfs. One implementation of sphere sdfs is to check if the radius of the sphere squared divided by the relative distance squared of the point sample to the center of the sphere is greater than 1. My implemented of the metaballs follows by summing up all the sphere sdfs representing metaballs and checking if this value is greater than one. This implementation is modelled from the formula of eletrical fields. 
+	- Since the sdf for the metaballs can cause the distance field to increase/decrease a lot, I had to use a diffrent computation for normals in order to determine the normals of the metaballs. I followed the math derived from this link in order to find the normals for my metaballs. http://blackpawn.com/texts/metanormals/default.html
+	- The base coloring for the metaballs follows from smooth sin/cos animations of color over time based on the metaball's position. The lighting color on the metaballs which create the shadows are calculated with lambertian lighting and special 5 tap ambient occlusion. Lambertian lighting is calculated by finding the intensity of the light with the relative angle between the light ray of the scene and the normal of the object with the dot product. Then, the light intensity multiplied with the base color of the metaball to produce smooth shadows. In addition, There is some ambient lighting added with 5 tap AO. This is accomplished by 5 additional ray marching samples from the intersection of the metaballs along the metaballs' normal. We sample the SDF along the normal with exponentiall decreasing weights in order to fake the ambient occlusion.
+	- The movement of the metaballs are based off of smooth scaling of time with sin and cos functions. You can modify the speed at which the metaballs move with the speed parameter within the gui. This is accomplished by multiplying the initial position of the metaball by cos(time * speed) and sin(time * speed) to get a smooth movement. 
+
+metaball base color
+![](images/metball base color.jpg)
+
+metaball with lambert
+![](images/metball with lambert.jpg)
+
+metaball with lambert and ambient occlusion
+![](images/metball with ao.jpg)
+
