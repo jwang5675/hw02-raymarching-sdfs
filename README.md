@@ -4,6 +4,8 @@ Jason Wang (jasonwa)
 Warning, scene is a bit slow. Reducing resolution/using Firefox will make the experience better.
 Demo: https://jwang5675.github.io/hw02-raymarching-sdfs/
 
+![](images/main.png)
+
 Sources:
   - The math for SDFs/Normals/Extra Credit info was adopted from class slides or from http://www.iquilezles.org/
   - The function used to derive the normals for metaballs are from: http://blackpawn.com/texts/metanormals/default.html
@@ -55,7 +57,7 @@ Circuluar Floor:
 - The movement of the cylinder is a simple rotation along the y-axis where the degree of rotation varies over time.
 - The base color of the floor is determined by taking the mod of the sum of a sin(pos.x) + sin(pos.z) and then flooring the result. This works because as the position changes over time, the sin grows towars 1 or -1 as decimals. When you floor the results, it will always repeat along this 1 or -1 resulting a period of repeated patterns. This creates the initial checker board coloring within the floor. To add the circles, I multiplied the sin(pos.x) + sin(pos.z) by a constant. Here is the math I used: floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
 - Besides the base color, there is also lambert light applied to the floor. The math for lambert shading is talked about above.
-- There is also penumbra shadows from the metaballs applied to the floor. The math behind this can be found at: https://iquilezles.org/www/articles/rmshadows/rmshadows.htm.
+- There is also soft shadows from the metaballs implemented with penumbra shadows applied to the floor. The math behind this can be found at: https://iquilezles.org/www/articles/rmshadows/rmshadows.htm.
 
 floor color constant = 0.5, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
 ![](images/floor_0.5.png)
@@ -65,3 +67,14 @@ floor color constant = 1, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z
 
 floor color constant = 4, floor(mod(constant * (sin(point.x * 2.0) + sin(point.z * 2.0)), 2.0));
 ![](images/floor_4.png)
+
+Rising Pistons:
+- The sdf for the pistons is the intersect between a cube and a torus.
+- The color of the piston is the same as the floor talked about above. The only thing that is added to the piston is 5tap AO explained in the metaball step. 
+- The rotating movement of the pistons is accomplished by rotating the point sampled along the y axis before translating the piston.
+- The cube translation up and down on the piston is accomplish by using a parabola scale over time. This allows the piston to look like it's being turned 'on and off' instead of having a smooth transition up and down over time. In addition, the cube of the piston rotates along its personal axis which is accomplished by rotating the cube before translation.
+
+Ambient Occlusion:
+- Ambient occlusion is added to the scene with 5tap AO. You can easily see the effects of AO by turning all of the light intensity in the gui to 0. 
+![](images/ao.png)
+From the above picture, we can see that adding ao to the scene adds a bit of light to the sdfs. In addition, you can see where the normal are close and run into other sdf shapes have much darker shadows compared to the ambient light added to the objects.
